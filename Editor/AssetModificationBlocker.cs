@@ -65,6 +65,7 @@ namespace Nomnom.LCProjectPatcher.Editor {
                 try {
                     foreach (var path in allPaths) {
                         var asset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
+                        if (asset.GetType().FullName.Contains("Unity")) continue;
                         Resources.UnloadAsset(asset);
                     }
                 } catch (Exception e) {
