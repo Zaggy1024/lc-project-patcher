@@ -59,28 +59,31 @@ namespace Nomnom.LCProjectPatcher.Editor {
                     list.Add(path);
                 }
 
-                Debug.LogWarning("You can't save assets while in play mode");
-                foreach (var path in paths) {
-                    Debug.LogWarning($"- blocked: \"{path}\"");
-                }
+                var allPaths = paths.Concat(list);
 
+                AssetDatabase.StartAssetEditing();
                 try {
-                    var allPaths = paths.Concat(list).ToArray();
                     foreach (var path in allPaths) {
                         var asset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
-                        if (asset.GetType().FullName.Contains("Unity")) continue;
                         Resources.UnloadAsset(asset);
                     }
-
-                    // AssetDatabase.StartAssetEditing();
-                    // AssetDatabase.ForceReserializeAssets(allPaths);
-                    // foreach (var path in allPaths) {
-                    //     AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
-                    // }
-                    // AssetDatabase.StopAssetEditing();
-                    AssetDatabase.Refresh();
                 } catch (Exception e) {
                     Debug.LogError(e);
+                }
+                finally {
+                    AssetDatabase.StopAssetEditing();
+                }
+
+                AssetDatabase.StartAssetEditing();
+                try {
+                    foreach (var path in allPaths) {
+                        AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+                    }
+                } catch (Exception e) {
+                    Debug.LogError(e);
+                }
+                finally {
+                    AssetDatabase.StopAssetEditing();
                 }
 
                 return Array.Empty<string>();
