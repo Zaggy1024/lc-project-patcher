@@ -51,13 +51,7 @@ namespace Nomnom.LCProjectPatcher.Editor {
 
                 var list = new List<string>();
                 var settings = ModuleUtility.GetPatcherSettings();
-                var lcPath = settings.GetLethalCompanyGamePath();
-                string soPath;
-                if (settings.AssetRipperSettings.TryGetMapping("MonoBehaviour", out var finalFolder)) {
-                    soPath = Path.Combine(settings.GetLethalCompanyGamePath(), finalFolder);
-                } else {
-                    soPath = Path.Combine(settings.GetLethalCompanyGamePath(), "MonoBehaviour");
-                }
+                var soPath = settings.GetBaseLethalCompanyPath();
                 
                 foreach (var guid in AssetDatabase.FindAssets("t:ScriptableObject", new string[] { soPath })) {
                     var path = AssetDatabase.GUIDToAssetPath(guid);
